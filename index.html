@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конвертер строк массива</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .subtitle {
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .symbol-input {
+            flex: 1;
+        }
+
+        .symbol-input label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .symbol-input input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .symbol-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .editor-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+        }
+
+        .editor-box {
+            flex: 1;
+        }
+
+        .editor-box label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        #output-array {
+            background-color: #f8fafc;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .copy-success {
+            color: var(--success);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .visible {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Конвертер строк массива</h1>
+            <p class="subtitle">Обрамляйте каждую строку массива указанными символами. Изменения применяются автоматически.</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="controls">
+                    <div class="symbol-input">
+                        <label for="left-symbol">Символ слева</label>
+                        <input type="text" id="left-symbol" value='"' maxlength="10" placeholder="Например: [">
+                    </div>
+                    <div class="symbol-input">
+                        <label for="right-symbol">Символ справа</label>
+                        <input type="text" id="right-symbol" value='",' maxlength="10" placeholder="Например: ]">
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-box">
+                        <label for="input-array">Исходный массив (по строкам)</label>
+                        <textarea id="input-array" placeholder="Введите каждую строку с новой строки&#10;Например:&#10;apple&#10;banana&#10;cherry"></textarea>
+                    </div>
+                    <div class="editor-box">
+                        <label for="output-array">Результат</label>
+                        <textarea id="output-array" readonly></textarea>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="copy-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 4V16C8 17.1046 8.89543 18 10 18H18C19.1046 18 20 17.1046 20 16V7.24264C20 6.44772 19.6839 5.68514 19.1213 5.12263L16.8774 2.87868C16.3149 2.31607 15.5523 2 14.7574 2H10C8.89543 2 8 2.89543 8 4Z" fill="white"/>
+                            <path d="M4 8H6V20C6 21.1046 6.89543 22 8 22H16C17.1046 22 18 21.1046 18 20V19" stroke="white" stroke-width="2"/>
+                        </svg>
+                        Копировать результат
+                    </button>
+                </div>
+                <div id="copy-success" class="copy-success">Скопировано в буфер обмена!</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const inputArray = document.getElementById('input-array');
+        const outputArray = document.getElementById('output-array');
+        const leftSymbol = document.getElementById('left-symbol');
+        const rightSymbol = document.getElementById('right-symbol');
+        const copyButton = document.getElementById('copy-button');
+        const copySuccess = document.getElementById('copy-success');
+
+        // Функция преобразования
+        function processArray() {
+            const lines = inputArray.value.split('\n');
+            const left = leftSymbol.value;
+            const right = rightSymbol.value;
+            
+            const result = lines
+                .filter(line => line.trim() !== '')
+                .map(line => left + line + right)
+                .join('\n');
+            
+            outputArray.value = result;
+        }
+
+        // Обработчики событий
+        [inputArray, leftSymbol, rightSymbol].forEach(el => {
+            el.addEventListener('input', processArray);
+        });
+
+        // Копирование с анимацией
+        copyButton.addEventListener('click', () => {
+            outputArray.select();
+            document.execCommand('copy');
+            
+            // Показать уведомление
+            copySuccess.classList.add('visible', 'fade-in');
+            
+            // Скрыть через 2 секунды
+            setTimeout(() => {
+                copySuccess.classList.remove('visible');
+                setTimeout(() => copySuccess.classList.remove('fade-in'), 300);
+            }, 2000);
+        });
+
+        // Инициализация
+        processArray();
+    </script>
+</body>
+</html>
